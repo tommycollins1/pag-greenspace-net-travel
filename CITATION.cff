@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+title: "PAG Greenspace Network Travel"
+message: "If you use this software, please cite both this repository and the associated publication."
+type: software
+
+authors:
+  - family-names: Collins
+    given-names: Tom
+
+repository-code: https://github.com/tommycollins1/pag-greenspace-net-travel
+
+license: MIT
+
+version: 1.0.0
+
+date-released: 2026-07-01

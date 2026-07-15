@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pag-greenspace-net-travel"
+version = "1.0.0"
+description = "Network travel analysis to greenspace."
+authors = [
+    {name = "Thomas Collins"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
