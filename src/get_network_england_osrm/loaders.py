@@ -20,14 +20,18 @@ Notes:
     output: GeoDataFrames (in-memory; callers write to disk as needed).
 -------------------------------------------------------------------------------
 """
+from __future__ import annotations
+
+from pathlib import Path
 from typing import Optional
 
 import geopandas as gpd
 
 from main_config import LSOA_POP_WEIGHTED_CENTROIDS_2021
-from src.data.get_geography.cfg import OX_LAD_2024_BUFF
-from src.data.get_greenspace.cfg import ALL_GREENSPACE_ACCESS_UNION
-from src.data.get_network_england_osrm.cfg import (
+from src.get_geography.cfg import OX_LAD_2024_BUFF
+from src.get_greenspace.cfg import ALL_GREENSPACE_ACCESS_UNION, \
+    ALL_GREENSPACE_UNION
+from src.get_network_england_osrm.cfg import (
     BNG_EPSG,
     CLIP_TO_TEST_REGION,
     LAD_SELECTIONS_TEST,
@@ -85,7 +89,12 @@ def load_destinations() -> gpd.GeoDataFrame:
 
     Reads ALL_GREENSPACE_ACCESS_UNION -- one row per access point, joined to
     the decomposed union polygon it sits on so each access point carries
-    has_agi/has_sssi/has_sac/is_protected/designation_count.
+    every designation flag present on the underlying union polygon.
+
+    Designation flag columns are discovered dynamically (anything on the
+    source parquet whose name starts with `has_`), so upstream additions
+    (SPA, Ramsar, etc.) propagate through the routing pipeline without a
+    code change here.
 
     The routing pipeline treats each access point as a distinct destination
     (dest_id = access_pt_id). Sites with multiple entries appear multiple
@@ -101,13 +110,28 @@ def load_destinations() -> gpd.GeoDataFrame:
     if clip is not None:
         access = gpd.clip(access, clip)
 
+    # Discover designation flag columns dynamically. Any upstream addition
+    # (SPA, Ramsar, ...) flows through automatically.
+    has_cols = [c for c in access.columns if c.startswith("has_")]
     keep = [c for c in (
-        "dest_id", "site_id",
-        "has_agi", "has_sssi", "has_sac",
-        "is_protected", "designation_count",
-        "geometry",
+        ["dest_id", "site_id"]
+        + has_cols
+        + ["is_protected", "designation_count",
+           "snap_distance_m", "geometry"]
     ) if c in access.columns]
     if "geometry" not in keep:
         keep.append("geometry")
 
     return access[keep].reset_index(drop=True)
+
+
+def load_greenspace_sites(union_path: Path = ALL_GREENSPACE_UNION) -> gpd.GeoDataFrame:
+    """Load greenspace union polygons in BNG."""
+    sites = gpd.read_file(union_path).to_crs(BNG_EPSG)
+    if "polygon_id" not in sites.columns:
+        raise RuntimeError(
+            f"ALL_GREENSPACE_UNION at {union_path} has no 'polygon_id' column. "
+            "Re-run greenspace_union.py or eng_greenspace_union.py."
+        )
+    print(f"Loaded {len(sites):,} greenspace site polygons.")
+    return sites

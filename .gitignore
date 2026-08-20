@@ -16,3 +16,18 @@ venv/
 
 .idea/
 .vscode/
+
+# --- data + pipeline outputs (never commit) ---
+data/
+processed/
+figures/
+deposit/
+*.pbf
+*.osrm*
+*.parquet
+*.gpkg
+!examples/**/*.parquet          # keep tiny fixture files if any land in examples
+!tests/**/*.parquet
+
+# --- generated archives ---
+*.zip

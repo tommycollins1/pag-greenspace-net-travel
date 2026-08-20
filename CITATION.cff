@@ -1,16 +1,32 @@
 cff-version: 1.2.0
-title: "PAG Greenspace Network Travel"
-message: "If you use this software, please cite both this repository and the associated publication."
+title: "pag-greenspace-net-travel: routing pipeline for the GreenRoute dataset"
+message: >-
+  If you use this software, please cite both this repository and the
+  associated dataset. If you use the dataset itself, cite the Zenodo record
+  below and (once published) the accompanying Scientific Data descriptor.
 type: software
+version: "1.0.0"
+date-released: "2026-08-19"
+license: MIT
+repository-code: "https://github.com/tommycollins1/pag-greenspace-net-travel"
 
 authors:
   - family-names: Collins
-    given-names: Tom
+    given-names: Thomas
+    affiliation: University of Exeter
+    # orcid: "https://orcid.org/0000-0000-0000-0000"  # add your ORCID here
 
-repository-code: https://github.com/tommycollins1/pag-greenspace-net-travel
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.22013904"
+    description: "GreenRoute dataset (all versions)"
 
-license: MIT
-
-version: 1.0.0
-
-date-released: 2026-07-01
+references:
+  - type: data
+    title: "GreenRoute: Pedestrian and Driving Network Travel Times to Greenspace for Lower Super Output Areas in England"
+    authors:
+      - family-names: Collins
+        given-names: Thomas
+    year: 2026
+    doi: "10.5281/zenodo.22013904"
+    repository: "https://zenodo.org/record/22013904"

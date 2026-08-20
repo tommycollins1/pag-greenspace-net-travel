@@ -18,8 +18,8 @@ Notes:
     output: DISTANCES_FINAL parquet (+ optional DISTANCES_PER_SITE parquet).
 -------------------------------------------------------------------------------
 """
-from src.data.get_network_england_osrm.collapse_to_site import collapse_to_site
-from src.data.get_network_england_osrm.compute_distances import (
+from src.get_network_england_osrm.collapse_to_site import collapse_to_site
+from src.get_network_england_osrm.compute_distances import (
     compute_distances,
 )
 
@@ -29,11 +29,11 @@ def main(do_collapse: bool = True):
     if do_collapse:
         collapse_to_site()
     return df
-sgb
+
 
 # ----------------------------------------------------------------------- Run -
 if __name__ == '__main__':
-    from project_help.project_level_help import debug_pause
+    def debug_pause(msg): input(msg)  # inlined for public repo
 
     debug_pause("Paused. Press Enter to continue...")
 

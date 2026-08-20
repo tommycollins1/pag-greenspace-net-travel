@@ -50,12 +50,16 @@ MODE_PROFILES: Final[dict[Mode, ModeProfile]] = {
     "drive": {
         "osrm_profile": "car",
         "threshold_s": 20 * 60,         # 20 min
-        "candidate_radius_m": 30_000,   # 30 km Euclidean catches a 20-min drive
+        # 25 km Euclidean = 20 min at 75 km/h (arterial-plus-motorway
+        # blend). Previous 30 km assumed 90 km/h peak; tightening cuts
+        # ~30% of /table calls with negligible loss of true reachable pairs
+        # at the far edge of a 20-min drive.
+        "candidate_radius_m": 25_000,
         "osrm_port": 5001,
     },
 }
 
-MODE: Final[Mode] = os.environ.get("VISAGE_MODE", "drive")  # type: ignore[assignment]
+MODE: Final[Mode] = os.environ.get("VISAGE_MODE", "walk")  # type: ignore[assignment]
 if MODE not in MODE_PROFILES:
     raise ValueError(
         f"Unknown MODE {MODE!r}. Expected one of {list(MODE_PROFILES)}."
@@ -112,7 +116,7 @@ PBF_PATH: Final[Path] = Path(
 LAD_SELECTIONS_TEST: Final[dict[str, list[str]]] = {
     "oxford_plus_cherwell": [
         "E07000178",  # Oxford
-        # "E07000177",  # Cherwell
+        "E07000177",  # Cherwell
     ],
 }
 
@@ -142,6 +146,25 @@ ORIGINS_CACHE: Final[Path] = GET_NETWORK_ENGLAND_OSRM / "origins.parquet"
 DESTINATIONS_CACHE: Final[Path] = (
     GET_NETWORK_ENGLAND_OSRM / "destinations.parquet"
 )
+
+# =============================================================================
+# CHECKPOINTING + PARALLELISM
+# =============================================================================
+# The routing loop writes one parquet partition per CHECKPOINT_EVERY origins
+# to BATCHES_DIR, and appends completed origin_ids to PROGRESS_FILE. On
+# restart, completed origins are skipped so a crash costs at most
+# CHECKPOINT_EVERY origins. The final concat step glob-reads all partitions.
+#
+# N_WORKERS is the ThreadPoolExecutor size: OSRM /table calls are HTTP,
+# so the GIL releases during I/O and threading scales near-linearly with
+# workers until OSRM itself saturates. 8 is a safe default; raise for a
+# beefier OSRM server, lower on a small VM.
+
+CHECKPOINT_EVERY: Final[int] = 500
+N_WORKERS: Final[int] = 8
+
+BATCHES_DIR: Final[Path] = GET_NETWORK_ENGLAND_OSRM / "batches"
+PROGRESS_FILE: Final[Path] = GET_NETWORK_ENGLAND_OSRM / "progress.csv"
 
 
 # =============================================================================

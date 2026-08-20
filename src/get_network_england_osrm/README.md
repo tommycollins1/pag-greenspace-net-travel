@@ -33,7 +33,7 @@ Install Docker Desktop from https://docker.com. On Windows, Docker Desktop uses 
 
 **WSL2 memory limit (required for England-scale preprocessing)**
 
-By default, WSL2 on a 16 GB machine allocates only ~8 GB to Docker. England-scale OSRM extract peaks at ~11 GB RAM. You must raise the limit before preprocessing or extract will crash partway through.
+By default WSL2 on a 16 GB machine allocates only ~8 GB to Docker. England-scale OSRM extract peaks at ~11 GB RAM. You must raise the limit before preprocessing or extract will crash partway through.
 
 Create (or edit) `C:\Users\<you>\.wslconfig`:
 

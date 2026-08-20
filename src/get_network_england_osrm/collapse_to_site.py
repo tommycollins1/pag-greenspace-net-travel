@@ -21,7 +21,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.data.get_network_england_osrm.cfg import (
+from src.get_network_england_osrm.cfg import (
     DISTANCES_FINAL,
     DISTANCES_PER_SITE,
     MODE,

@@ -35,7 +35,7 @@ from typing import Sequence
 import pandas as pd
 import requests
 
-from src.data.get_network_england_osrm.cfg import (
+from src.get_network_england_osrm.cfg import (
     OSRM_URL,
     PROFILE,
     TABLE_ANNOTATIONS,
