@@ -1,12 +1,14 @@
 # pag-greenspace-net-travel
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22013904.svg)](https://doi.org/10.5281/zenodo.22013904)
+[![Code DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22028407.svg)](https://doi.org/10.5281/zenodo.22028407)
+[![Dataset DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22013904.svg)](https://doi.org/10.5281/zenodo.22013904)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 
 Routing pipeline used to build **GreenRoute** — a national dataset of Lower Super Output Area (LSOA) walking and driving network travel times to nearest accessible greenspace across England.
 
 The **dataset** is deposited on Zenodo: <https://doi.org/10.5281/zenodo.22013904>.
+This **code repository** has its own DOI: <https://doi.org/10.5281/zenodo.22028407>.
 The accompanying **data descriptor** has been submitted to *Scientific Data*.
 
 ## What this code does

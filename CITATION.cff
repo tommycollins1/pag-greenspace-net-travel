@@ -18,8 +18,8 @@ authors:
 
 identifiers:
   - type: doi
-    value: "10.5281/zenodo.22013904"
-    description: "GreenRoute dataset (all versions)"
+    value: "10.5281/zenodo.22028407"
+    description: "Code archive (this repository release, all versions)"
 
 references:
   - type: data
