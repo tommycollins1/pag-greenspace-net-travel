@@ -14,7 +14,7 @@ authors:
   - family-names: Collins
     given-names: Thomas
     affiliation: University of Exeter
-    # orcid: "https://orcid.org/0000-0000-0000-0000"  # add your ORCID here
+    orcid: "https://orcid.org/0000-0003-1791-7002"
 
 identifiers:
   - type: doi
