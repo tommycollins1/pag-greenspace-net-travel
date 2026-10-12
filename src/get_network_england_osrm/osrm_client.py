@@ -142,13 +142,17 @@ def one_to_many(
         batch_ids = dest_ids[i:i + step]
         payload = _one_batch_table(origin_lonlat, batch_coords)
 
-        # OSRM returns durations as [[d1, d2, ...]] for one source. Same
-        # shape for distances. Waypoints carry snap distances; index 0 is
-        # the origin, 1..N are destinations.
+        # OSRM /table returns durations as [[d1, d2, ...]] for one source
+        # (same shape for distances if annotations=duration,distance).
+        # Snap distances live in the `sources` and `destinations` arrays
+        # (not `waypoints` -- that's a /route response field). Each entry
+        # in those arrays has a `distance` field: the metres from the
+        # requested coordinate to the nearest routable node.
         durations = payload.get("durations", [[]])[0]
         distances = payload.get("distances", [[]])[0]
-        waypoints = payload.get("waypoints", [])
-        origin_snap = waypoints[0]["distance"] if waypoints else None
+        sources = payload.get("sources", [])
+        destinations = payload.get("destinations", [])
+        origin_snap = sources[0].get("distance") if sources else None
 
         for j, dest_id in enumerate(batch_ids):
             tt = durations[j] if j < len(durations) else None
@@ -156,8 +160,8 @@ def one_to_many(
             if tt is None:
                 continue
             dest_snap = (
-                waypoints[j + 1]["distance"]
-                if (j + 1) < len(waypoints)
+                destinations[j].get("distance")
+                if j < len(destinations)
                 else None
             )
             rows.append(

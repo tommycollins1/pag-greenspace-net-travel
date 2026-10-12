@@ -5,8 +5,8 @@ message: >-
   associated dataset. If you use the dataset itself, cite the Zenodo record
   below and (once published) the accompanying Scientific Data descriptor.
 type: software
-version: "1.0.0"
-date-released: "2026-08-19"
+version: "1.1.0"
+date-released: "2026-10-12"
 license: MIT
 repository-code: "https://github.com/tommycollins1/pag-greenspace-net-travel"
 

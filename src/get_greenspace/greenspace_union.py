@@ -234,9 +234,15 @@ def main(assemble_greenspace: gpd.GeoDataFrame):
     else:
         greenspace['is_protected'] = False
 
-    greenspace['designation_count'] = greenspace[
-        [f"has_{d}" for d in datasets]
-    ].sum(axis=1)
+    greenspace['designation_count'] = greenspace[[f"has_{d}" for d in datasets]].sum(axis=1)
+
+    has_cols = [f"has_{d}" for d in datasets]
+
+    greenspace = greenspace.dissolve(by=has_cols, as_index=False)
+    greenspace = greenspace.explode(index_parts=False, ignore_index=True)  # checkme 2026-09-16 added to remove the numerous greenspace bug (if it is a bug)
+
+    MIN_AREA_M2 = 10.0
+    greenspace = greenspace[greenspace.area >= MIN_AREA_M2].copy()
 
     greenspace["polygon_id"] = range(len(greenspace))
     cols = ["polygon_id"] + [c for c in greenspace.columns if c != "polygon_id"]

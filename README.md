@@ -160,7 +160,7 @@ See `examples/` for a runnable script.
 
 **Descriptor paper (once accepted):**
 
-> Collins, T. et al. (2026). *Pedestrian and Driving Network Distances to Greenspace for Lower Super Output Areas in England*. Manuscript submitted to *Scientific Data*.
+> Collins, T. et al. (2026). *Pedestrian and Driving Network Travel Times to Greenspace for Lower Super Output Areas in England*. Manuscript submitted to *Scientific Data*.
 
 `CITATION.cff` provides the machine-readable citation — GitHub renders a "Cite this repository" button from it.
 

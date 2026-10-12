@@ -14,17 +14,20 @@ Description: Join AGI access points to the decomposed union polygons produced
 
     Call via __main__ for the England pipeline (reads ALL_GREENSPACE_UNION,
     writes ALL_GREENSPACE_ACCESS_UNION). Call main() with explicit paths for the
-    Oxford case-study pipeline (use OX_GREENSPACE_UNION + OX_GREENSPACE_ACCESS_UNION).
+    Oxford case-study pipeline (use OX_GREENSPACE_UNION +
+    OX_GREENSPACE_ACCESS_UNION).
 
     Spatial join logic:
-      - Filter union polygons to those containing AGI (has_agi == True),
-        since access points are AGI-derived and would not attach to
-        SSSI-only or SAC-only polygons.
+      - All union polygons are used (not filtered to has_agi only) so that
+        access points sitting on SSSI-only or SAC-only land correctly inherit
+        those designation flags. Access points are AGI-derived but can sit on
+        polygons that are SSSI/SAC with or without AGI overlap — filtering to
+        has_agi before the join was discarding that protected-land signal.
       - sjoin_nearest on the access points; ties are broken by row order.
       - Optional sanity cap on max nearest-distance (default 50 m). Access
-        points further than this from any AGI-containing polygon are
-        dropped with a warning -- usually indicates a stray point or a
-        coordinate-system bug upstream.
+        points further than this from any union polygon are dropped with a
+        warning -- usually indicates a stray point or a coordinate-system
+        bug upstream.
 Created: 13/05/2026
 Author: tommycollins1 (trc207)
 Notes:
@@ -50,57 +53,66 @@ from src.get_greenspace.cfg import (
 )
 
 
-# Access points further than this from any AGI-containing union polygon are
-# dropped with a warning. Tolerance accounts for floating-point/round-trip
-# mismatch between the access points and union polygon boundaries.
+# Access points further than this from any union polygon are dropped with a
+# warning. Tolerance accounts for floating-point/round-trip mismatch between
+# the access points and union polygon boundaries.
 MAX_SNAP_DISTANCE_M = 50.0
 
 
 def main(union_path: Path = ALL_GREENSPACE_UNION):
+    """Join AGI access points to a decomposed greenspace union.
+
+    Parameters
+    ----------
+    union_path : Path
+        Decomposed union gpkg (from greenspace_union.py). Defaults to
+        ALL_GREENSPACE_UNION for the England pipeline. Pass OX_GREENSPACE_UNION
+        for the Oxford case-study pipeline.
+    """
     access = gpd.read_file(AGI_ACCESS_NODES_GI).to_crs(27700)
     union = gpd.read_file(union_path).to_crs(27700)
 
     if "polygon_id" not in union.columns:
         raise RuntimeError(
             f"{union_path} has no 'polygon_id' column. Re-run "
-            "greenspace_union.py (Oxford) or eng_greenspace_union.py (England) "
-            "to regenerate with the polygon_id field."
+            "greenspace_union.py to regenerate with the polygon_id field."
         )
 
     # Derive designation columns dynamically from whatever datasets are present
     has_cols = [c for c in union.columns if c.startswith("has_")]
 
-    agi_union = union[union["has_agi"]].copy()
-    if agi_union.empty:
-        raise RuntimeError(
-            "No AGI-containing polygons in union file. Nothing to "
-            "join access points to."
-        )
+    # Use all union polygons — not filtered to has_agi only. Access points are
+    # AGI-derived but can sit on SSSI-only or SAC-only polygons; filtering
+    # before the join was silently discarding protected-land designation signal.
+    all_union = union.copy()
 
+    # Stable, deterministic access_pt_id
     access = access.reset_index(drop=True).copy()
     access["access_pt_id"] = [f"ap_{i:07d}" for i in range(len(access))]
 
+    # Carry only the join-side cols we need so the result is tidy
     keep_union_cols = (
         ["polygon_id"] + has_cols +
         ["is_protected", "designation_count", "geometry"]
     )
-    agi_union = agi_union[keep_union_cols].rename(
+    all_union = all_union[keep_union_cols].rename(
         columns={"polygon_id": "site_id"}
     )
 
     joined = gpd.sjoin_nearest(
         access[["access_pt_id", "geometry"]],
-        agi_union,
+        all_union,
         how="left",
         max_distance=MAX_SNAP_DISTANCE_M,
         distance_col="snap_distance_m",
     )
 
+    # Diagnostics
     n_dropped = int(joined["site_id"].isna().sum())
     if n_dropped:
         print(
             f"WARNING: {n_dropped} access points further than "
-            f"{MAX_SNAP_DISTANCE_M:.0f} m from any AGI-containing polygon "
+            f"{MAX_SNAP_DISTANCE_M:.0f} m from any union polygon "
             "-- these will be dropped."
         )
         joined = joined.dropna(subset=["site_id"])
@@ -131,9 +143,6 @@ def main(union_path: Path = ALL_GREENSPACE_UNION):
 asfv
 # ----------------------------------------------------------------------- Run -
 if __name__ == '__main__':
-    def debug_pause(msg): input(msg)  # inlined for public repo
-
-    debug_pause("Paused. Press Enter to continue...")
 
     GET_GREENSPACE.mkdir(parents=True, exist_ok=True)
 

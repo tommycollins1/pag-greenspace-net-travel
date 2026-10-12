@@ -10,7 +10,6 @@ Description: Driver for the OSRM-backed routing pipeline. Steps:
 
     Re-runs are safe: the existing parquet is overwritten on success, and
     OSRM holds the graph in memory so there's no fetch step to checkpoint.
-    If OSRM is down mid-run, it'll fail fast on the next /table call.
 Created: 13/05/2026
 Author: tommycollins1 (trc207)
 Notes:

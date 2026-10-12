@@ -85,8 +85,8 @@ TABLE_BATCH_SIZE: Final[int] = 99
 # Annotations requested from OSRM /table.
 # "duration"          -- works on all OSRM versions (dist_m will be None)
 # "duration,distance" -- requires OSRM >= 5.22 (adds dist_m to output)
-# Switch to "duration,distance" after upgrading the Docker image.
-TABLE_ANNOTATIONS: Final[str] = "duration"
+# Modern osrm-backend images (>= 2019) all support duration+distance.
+TABLE_ANNOTATIONS: Final[str] = "duration,distance"
 
 
 # =============================================================================
