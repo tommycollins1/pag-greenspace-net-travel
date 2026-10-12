@@ -18,7 +18,7 @@ authors:
 
 identifiers:
   - type: doi
-    value: "10.5281/zenodo.22028407"
+    value: "10.5281/zenodo.23318047"
     description: "Code archive (this repository release, all versions)"
 
 references:
@@ -28,5 +28,5 @@ references:
       - family-names: Collins
         given-names: Thomas
     year: 2026
-    doi: "10.5281/zenodo.22013904"
-    repository: "https://zenodo.org/record/22013904"
+    doi: "10.5281/zenodo.23318979"
+    repository: "https://zenodo.org/record/23318979"
