@@ -5,7 +5,7 @@ Description: End-to-end example showing how to load the deposited GreenRoute
     parquet files, join them together, and compute a few common derived
     quantities. Uses the public deposit archive layout -- see:
 
-        https://doi.org/10.5281/zenodo.22013904
+        https://doi.org/10.5281/zenodo.23318979
 
     Assumes you have unzipped `greenroute_v1.0.zip` into a directory whose
     path is passed via the DEPOSIT_ROOT environment variable, or edit the
